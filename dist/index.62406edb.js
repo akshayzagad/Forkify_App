@@ -24,12 +24,7 @@ const recipe = async function() {
             title: recipe.title,
             ingredients: recipe.ingredients
         };
-        console.log(recipe.cookingTime);
-    } catch (err) {
-        alert(err);
-        console.error(err);
-    }
-    const markup = `<figure class="recipe__fig">
+        const markup = `<figure class="recipe__fig">
           <img src="${recipe.imageurl}" alt="Tomato" class="recipe__img" />
           <h1 class="recipe__title">
             <span>${recipe.title}</span>
@@ -81,16 +76,21 @@ const recipe = async function() {
           <h2 class="heading--2">Recipe ingredients</h2>
           
           <ul class="recipe__ingredient-list">
-        <li class="recipe__ingredient">
+          ${recipe.ingredients.map((ing)=>{
+            return `
+            <li class="recipe__ingredient">
               <svg class="recipe__icon">
                 <use href="src/img/icons.svg#icon-check"></use>
               </svg>
-              <div class="recipe__quantity">0.5</div>
+              <div class="recipe__quantity">${ing.quantity}</div>
               <div class="recipe__description">
-                <span class="recipe__unit">cup</span>
-                ricotta cheese
+                <span class="recipe__unit">${ing.unit}</span>
+                ${ing.description}
               </div>
             </li>
+            `;
+        }).join('')}
+            
           </ul>
         </div>
         <div class="recipe__directions">
@@ -112,7 +112,11 @@ const recipe = async function() {
           </a>
         </div>
         `;
-    recipeContainer.insertAdjacentHTML('afterbegin', markup);
+        recipeContainer.insertAdjacentHTML('afterbegin', markup);
+    } catch (err) {
+        alert(err);
+        console.error(err);
+    }
 };
 recipe();
 
