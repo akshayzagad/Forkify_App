@@ -13,6 +13,7 @@ const recipe = async function() {
         if (!responseApi.ok) throw new Error(`Somthing went wrong in responseApi.status ${response.status},${responseData.message}`);
         // console.log(responseApi);
         // console.log(responseData.data);
+<<<<<<< HEAD
         let recipe = responseData.data.recipe;
         //  recipe =
         // {
@@ -37,6 +38,25 @@ const recipe = async function() {
                     <span>${recipe.title}</span>
                 </h1>
             </figure>
+=======
+        let { recipe } = responseData.data;
+        recipe = {
+            cookingTime: recipe.cooking_time,
+            id: recipe.id,
+            imageurl: recipe.image_url,
+            publisher: recipe.publisher,
+            servings: recipe.servings,
+            sourceurl: recipe.source_url,
+            title: recipe.title,
+            ingredients: recipe.ingredients
+        };
+        const markup = `<figure class="recipe__fig">
+          <img src="${recipe.imageurl}" alt="Tomato" class="recipe__img" />
+          <h1 class="recipe__title">
+            <span>${recipe.title}</span>
+          </h1>
+        </figure>
+>>>>>>> 7d78303e531d5150a5ba473eab7a90e486cc15eb
 
             <div class="recipe__details">
                 <div class="recipe__info">
@@ -86,6 +106,7 @@ const recipe = async function() {
                 </ul>
             </div>
 
+<<<<<<< HEAD
             <div class="recipe__directions">
                 <h2 class="heading--2">How to cook it</h2>
                 <p class="recipe__directions-text">
@@ -100,8 +121,53 @@ const recipe = async function() {
                     </svg>
                 </a>
             </div>
+=======
+        <div class="recipe__ingredients">
+          <h2 class="heading--2">Recipe ingredients</h2>
+          
+          <ul class="recipe__ingredient-list">
+          ${recipe.ingredients.map((ing)=>{
+            return `
+            <li class="recipe__ingredient">
+              <svg class="recipe__icon">
+                <use href="src/img/icons.svg#icon-check"></use>
+              </svg>
+              <div class="recipe__quantity">${ing.quantity}</div>
+              <div class="recipe__description">
+                <span class="recipe__unit">${ing.unit}</span>
+                ${ing.description}
+              </div>
+            </li>
+            `;
+        }).join('')}
+            
+          </ul>
+        </div>
+        <div class="recipe__directions">
+          <h2 class="heading--2">How to cook it</h2>
+          <p class="recipe__directions-text">
+            This recipe was carefully designed and tested by
+            <span class="recipe__publisher">${recipe.publisher}</span>. Please check out
+            directions at their website.
+          </p>
+          <a
+            class="btn--small recipe__btn"
+            href="http://thepioneerwoman.com/cooking/pasta-with-tomato-cream-sauce/"
+            target="_blank"
+          >
+            <span>Directions</span>
+            <svg class="search__icon">
+              <use href="src/img/icons.svg#icon-arrow-right"></use>
+            </svg>
+          </a>
+        </div>
+>>>>>>> 7d78303e531d5150a5ba473eab7a90e486cc15eb
         `;
-    recipeContainer.insertAdjacentHTML('afterbegin', markup);
+        recipeContainer.insertAdjacentHTML('afterbegin', markup);
+    } catch (err) {
+        alert(err);
+        console.error(err);
+    }
 };
 recipe();
 
