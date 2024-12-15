@@ -1,4 +1,4 @@
-import icons from 'url:../img/icons.svg'
+
 import 'core-js/stable';
 import 'regenerator-runtime/runtime'
 import * as model from './model.js'
@@ -15,17 +15,6 @@ const timeout = function (s) {
   });
 };
 
-const renderSpinner = function (parentEl) {
-  const markup = `
-  <div class="spinner">
-    <svg>
-      <use href="${icons}#icon-loader"></use>
-    </svg>
-  </div> `;
-  parentEl.innerHTML = '';
-  parentEl.insertAdjacentHTML('afterbegin', markup);
-}
-
 const recipe = async function () {
   try {
     // Get id when click on hasmap using load hasmap event on window 
@@ -40,7 +29,7 @@ const recipe = async function () {
     console.log(recipe);
 
     //  Rendering spinner when load the recipe
-    renderSpinner(recipeContainer);
+    recipeView.renderSpinner();
 
     // Here we get data from model by object state which is initiallize above code
     recipeView.render(model.state.recipe);
