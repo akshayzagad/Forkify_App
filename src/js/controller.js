@@ -7,14 +7,6 @@ import recipeView from './views/recipeView.js';
 
 const recipeContainer = document.querySelector('.recipe');
 
-const timeout = function (s) {
-  return new Promise(function (_, reject) {
-    setTimeout(function () {
-      reject(new Error(`Request took too long! Timeout after ${s} second`));
-    }, s * 1000);
-  });
-};
-
 const renderSpinner = function (parentEl) {
   const markup = `
   <div class="spinner">
@@ -26,7 +18,7 @@ const renderSpinner = function (parentEl) {
   parentEl.insertAdjacentHTML('afterbegin', markup);
 }
 
-const recipe = async function () {
+const controlRecipe = async function () {
   try {
     // Get id when click on hasmap using load hasmap event on window 
     const id = window.location.hash.slice(1);
@@ -58,4 +50,4 @@ const recipe = async function () {
 // recipe();
 let events = ['hashchange', 'load']
 
-events.forEach(ev => window.addEventListener(ev, recipe));
+events.forEach(ev => window.addEventListener(ev, controlRecipe));
