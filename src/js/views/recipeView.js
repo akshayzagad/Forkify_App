@@ -16,6 +16,42 @@ class RecipeView {
     this.#parentElement.innerHTML = "";
   }
 
+  handlingError(message){
+    const markup = `<div class="error">
+            <div>
+              <svg>
+                <use href="${icons}#icon-alert-triangle"></use>
+              </svg>
+            </div>
+            <p>No recipes found for your query. Please try again!</p>
+            <p>${message}</p>
+          </div>`;
+    this.#clear();
+    this.#parentElement.insertAdjacentHTML("afterbegin", markup);
+  }
+
+  succsessMessage(sMessage){
+    const markup = `
+    <div class="message">
+        <div>
+          <svg>
+            <use href="src/img/icons.svg#icon-smile"></use>
+          </svg>
+        </div>
+        <p>Start by searching for a recipe or an ingredient. Have fun!</p>
+      </div>
+    `
+    this.#clear();
+    this.#parentElement.insertAdjacentHTML("afterbegin", markup);
+  }
+
+  /** Publisher Function :- Get a input from controller Js to handle the events*/
+
+  addHandlerRender(controlRecipe){
+    let events = ['hashchange', 'load']
+    events.forEach(ev => window.addEventListener(ev, controlRecipe));
+  }
+
   renderSpinner = function () {
     const markup = `
       <div class="spinner">

@@ -7,47 +7,38 @@ import recipeView from './views/recipeView.js';
 
 const recipeContainer = document.querySelector('.recipe');
 
-const renderSpinner = function (parentEl) {
-  const markup = `
-  <div class="spinner">
-    <svg>
-      <use href="${icons}#icon-loader"></use>
-    </svg>
-  </div> `;
-  parentEl.innerHTML = '';
-  parentEl.insertAdjacentHTML('afterbegin', markup);
-}
-
 const controlRecipe = async function () {
   try {
-    // Get id when click on hasmap using load hasmap event on window 
+
+    /* Get id when click on hasmap using load hasmap event on window  */
     const id = window.location.hash.slice(1);
     if (!id) return;
 
-    // Loading Recipe
+    /* Loading Recipe */
     await model.loadRecipe(id);
 
-    // Get import inisilize empty object in controller to use in markup
+    /* Get import inisilize empty object in controller to use in markup */
     let { recipe } = model.state;
     console.log(recipe);
 
-    //  Rendering spinner when load the recipe
-    renderSpinner(recipeContainer);
+    /*  Rendering spinner when load the recipe */
+    recipeView.renderSpinner();
 
-    // Here we get data from model by object state which is initiallize above code
+    /* Here we get data from model by object state which is initiallize above code */
     recipeView.render(model.state.recipe);
+
     /* Here We use same method to initilize constructor in recipeView */
     //let recipeView = new recipeView(model.state.recipe); 
 
     
-  } catch (err) {
-    alert(err)
-    console.error(err);
+  }
+   catch (err) {
+    recipeView.handlingError(err);
   }
 
 }
 
-// recipe();
-let events = ['hashchange', 'load']
+/** Subskriber Function :- calling addHandlerRender function in recipeView*/
+recipeView.addHandlerRender(controlRecipe);
 
-events.forEach(ev => window.addEventListener(ev, controlRecipe));
+

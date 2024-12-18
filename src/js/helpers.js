@@ -8,17 +8,20 @@ const timeout = function (s) {
     });
 };
 
-export const getJson = async function(url){
+export const getJson = async function (url) {
     try {
-        const responseApi = await Promise.race([fetch(url), timeout(TIME_OUT)]) ;
+        const responseApi = await Promise.race([fetch(url), timeout(TIME_OUT)]);
 
         const responseData = await responseApi.json();
 
         if (!responseApi.ok) throw new Error(`Somthing went wrong in responseApi.status ${response.status},${responseData.message}`);
-        
+
         return responseData;
-    } catch (error) {
-        throw error;
+
+    } catch (err) {
+
+        throw err;
+
     }
-   
+
 }
