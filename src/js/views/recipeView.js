@@ -1,33 +1,21 @@
 import icons from "url:../../img/icons.svg";
 import { Fraction } from "fractional";
+import View from "./View.js";
+class RecipeView extends View {
+  _parentElement = document.querySelector(".recipe");
 
-class RecipeView {
-  #parentElement = document.querySelector(".recipe");
+  _errorMessage = "No recipes found for your query. Please try again!";
 
-  render(data) {
-    this.data = data;
-    const markup = this.#genrateMarkup();
-    this.#clear();
-    this.#parentElement.insertAdjacentHTML("afterbegin", markup);
-    console.log(data);
+  _message = "";
+
+  /** Publisher Function :- Get a input from controller Js to handle the events*/
+
+  addHandlerRender(controlRecipe) {
+    let events = ['hashchange', 'load']
+    events.forEach(ev => window.addEventListener(ev, controlRecipe));
   }
 
-  #clear() {
-    this.#parentElement.innerHTML = "";
-  }
-
-  renderSpinner = function () {
-    const markup = `
-      <div class="spinner">
-        <svg>
-          <use href="${icons}#icon-loader"></use>
-        </svg>
-      </div> `;
-    this.#parentElement.innerHTML = "";
-    this.#parentElement.insertAdjacentHTML("afterbegin", markup);
-  };
-
-  #genrateMarkup() {
+  _genrateMarkup() {
     return `<figure class="recipe__fig">
           <img src="${this.data.imageurl}" alt="Tomato" class="recipe__img" />
           <h1 class="recipe__title">
@@ -40,18 +28,16 @@ class RecipeView {
             <svg class="recipe__info-icon">
               <use href="${icons}#icon-clock"></use>
             </svg>
-            <span class="recipe__info-data recipe__info-data--minutes">${
-              this.data.cookingTime
-            }</span>
+            <span class="recipe__info-data recipe__info-data--minutes">${this.data.cookingTime
+      }</span>
             <span class="recipe__info-text">minutes</span>
           </div>
           <div class="recipe__info">
             <svg class="recipe__info-icon">
               <use href="${icons}#icon-users"></use>
             </svg>
-            <span class="recipe__info-data recipe__info-data--people">${
-              this.data.servings
-            }</span>
+            <span class="recipe__info-data recipe__info-data--people">${this.data.servings
+      }</span>
             <span class="recipe__info-text">servings</span>
 
             <div class="recipe__info-buttons">
@@ -85,17 +71,16 @@ class RecipeView {
           
           <ul class="recipe__ingredient-list">
           ${this.data.ingredients
-            .map((ing) => this.#genrateMarkupIngreident(ing))
-            .join("")}
+        .map((ing) => this._genrateMarkupIngreident(ing))
+        .join("")}
          </ul>
         </div>
         <div class="recipe__directions">
           <h2 class="heading--2">How to cook it</h2>
           <p class="recipe__directions-text">
             This recipe was carefully designed and tested by
-            <span class="recipe__publisher">${
-              this.data.publisher
-            }</span>. Please check out
+            <span class="recipe__publisher">${this.data.publisher
+      }</span>. Please check out
             directions at their website.
           </p>
           <a
@@ -111,15 +96,14 @@ class RecipeView {
         </div>
         `;
   }
-  #genrateMarkupIngreident(ing) {
+  _genrateMarkupIngreident(ing) {
     return `
       <li class="recipe__ingredient">
         <svg class="recipe__icon">
           <use href="${icons}#icon-check"></use>
         </svg>
-        <div class="recipe__quantity">${
-          ing.quantity ? new Fraction(ing.quantity).toString() : ""
-        }</div>
+        <div class="recipe__quantity">${ing.quantity ? new Fraction(ing.quantity).toString() : ""
+      }</div>
         <div class="recipe__description">
           <span class="recipe__unit">${ing.unit}</span>
           ${ing.description}

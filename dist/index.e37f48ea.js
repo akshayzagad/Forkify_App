@@ -604,45 +604,43 @@ var _runtime = require("regenerator-runtime/runtime");
 var _modelJs = require("./model.js");
 var _recipeViewJs = require("./views/recipeView.js");
 var _recipeViewJsDefault = parcelHelpers.interopDefault(_recipeViewJs);
-const recipeContainer = document.querySelector('.recipe');
-const renderSpinner = function(parentEl) {
-    const markup = `
-  <div class="spinner">
-    <svg>
-      <use href="${(0, _iconsSvgDefault.default)}#icon-loader"></use>
-    </svg>
-  </div> `;
-    parentEl.innerHTML = '';
-    parentEl.insertAdjacentHTML('afterbegin', markup);
-};
+var _searchViewJs = require("./views/searchView.js");
+var _searchViewJsDefault = parcelHelpers.interopDefault(_searchViewJs);
+var _resultViewJs = require("./views/resultView.js");
+var _resultViewJsDefault = parcelHelpers.interopDefault(_resultViewJs);
+const recipeContainer = document.querySelector(".recipe");
 const controlRecipe = async function() {
     try {
-        // Get id when click on hasmap using load hasmap event on window 
-        const id = window.location.hash.slice(1);
+        /* Get id when click on hasmap using load hasmap event on window  */ const id = window.location.hash.slice(1);
         if (!id) return;
-        // Loading Recipe
-        await _modelJs.loadRecipe(id);
-        // Get import inisilize empty object in controller to use in markup
-        let { recipe } = _modelJs.state;
+        /* Loading Recipe */ await _modelJs.loadRecipe(id);
+        /* Get import inisilize empty object in controller to use in markup */ let { recipe } = _modelJs.state;
         console.log(recipe);
-        //  Rendering spinner when load the recipe
-        renderSpinner(recipeContainer);
-        // Here we get data from model by object state which is initiallize above code
-        (0, _recipeViewJsDefault.default).render(_modelJs.state.recipe);
-    /* Here We use same method to initilize constructor in recipeView */ //let recipeView = new recipeView(model.state.recipe); 
+        /*  Rendering spinner when load the recipe */ (0, _recipeViewJsDefault.default).renderSpinner();
+        /* Here we get data from model by object state which is initiallize above code */ (0, _recipeViewJsDefault.default).render(_modelJs.state.recipe);
+    /* Here We use same method to initilize constructor in recipeView */ //let recipeView = new recipeView(model.state.recipe);
     } catch (err) {
-        alert(err);
-        console.error(err);
+        (0, _recipeViewJsDefault.default).handlingError(err);
     }
 };
-// recipe();
-let events = [
-    'hashchange',
-    'load'
-];
-events.forEach((ev)=>window.addEventListener(ev, controlRecipe));
+const ControlSearchResults = async function() {
+    try {
+        /* Render Spinner */ (0, _resultViewJsDefault.default).renderSpinner();
+        /* Get search query from search view and Store it */ let query = (0, _searchViewJsDefault.default).getQuery();
+        if (!query) return;
+        /* store query pass in Api and get data  */ await _modelJs.loadSearchResult(query);
+        /* Render Preview passing data into Parent class View which come from above api*/ (0, _resultViewJsDefault.default).render(_modelJs.state.searchs.results);
+    } catch (error) {
+        console.error(error);
+    }
+};
+function init() {
+    /** Subskriber Function :- calling addHandlerRender function in recipeView*/ (0, _recipeViewJsDefault.default).addHandlerRender(controlRecipe);
+    (0, _searchViewJsDefault.default).addHandlerSearch(ControlSearchResults);
+}
+init();
 
-},{"core-js/modules/web.immediate.js":"49tUX","url:../img/icons.svg":"loVOp","regenerator-runtime/runtime":"dXNgZ","./model.js":"Y4A21","./views/recipeView.js":"l60JC","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"49tUX":[function(require,module,exports,__globalThis) {
+},{"core-js/modules/web.immediate.js":"49tUX","url:../img/icons.svg":"loVOp","regenerator-runtime/runtime":"dXNgZ","./model.js":"Y4A21","./views/recipeView.js":"l60JC","./views/searchView.js":"9OQAM","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","./views/resultView.js":"f70O5"}],"49tUX":[function(require,module,exports,__globalThis) {
 'use strict';
 // TODO: Remove this module from `core-js@4` since it's split to modules listed below
 require("52e9b3eefbbce1ed");
@@ -2521,15 +2519,20 @@ var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "state", ()=>state);
 parcelHelpers.export(exports, "loadRecipe", ()=>loadRecipe);
+parcelHelpers.export(exports, "loadSearchResult", ()=>loadSearchResult);
 var _config = require("./config");
 var _helpers = require("./helpers");
 const state = {
-    recipe: {}
+    recipe: {},
+    searchs: {
+        query: '',
+        results: []
+    }
 };
 const loadRecipe = async function(id) {
     try {
         //Recipe Api
-        const responseData = await (0, _helpers.getJson)(`${(0, _config.API_URL)}/${id}`);
+        const responseData = await (0, _helpers.getJson)(`${(0, _config.API_URL)}${id}`);
         let { recipe } = responseData.data;
         state.recipe = {
             cookingTime: recipe.cooking_time,
@@ -2546,13 +2549,32 @@ const loadRecipe = async function(id) {
         console.error(error);
     }
 };
+const loadSearchResult = async function(query) {
+    try {
+        //Recipe Api
+        const data = await (0, _helpers.getJson)(`${(0, _config.API_URL)}?search=${query}`);
+        // console.log(data);
+        state.searchs.results = data.data.recipes.map((recipe)=>{
+            return {
+                id: recipe.id,
+                imageurl: recipe.image_url,
+                publisher: recipe.publisher,
+                title: recipe.title
+            };
+        });
+        console.log(state.searchs.results);
+    } catch (error) {
+        console.error(error);
+    }
+};
+loadSearchResult('pizza');
 
 },{"./config":"k5Hzs","./helpers":"hGI1E","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"k5Hzs":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "API_URL", ()=>API_URL);
 parcelHelpers.export(exports, "TIME_OUT", ()=>TIME_OUT);
-const API_URL = 'https://forkify-api.herokuapp.com/api/v2/recipes';
+const API_URL = 'https://forkify-api.herokuapp.com/api/v2/recipes/';
 const TIME_OUT = 10;
 
 },{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"gkKU3":[function(require,module,exports,__globalThis) {
@@ -2617,29 +2639,20 @@ parcelHelpers.defineInteropFlag(exports);
 var _iconsSvg = require("url:../../img/icons.svg");
 var _iconsSvgDefault = parcelHelpers.interopDefault(_iconsSvg);
 var _fractional = require("fractional");
-class RecipeView {
-    #parentElement = document.querySelector(".recipe");
-    render(data) {
-        this.data = data;
-        const markup = this.#genrateMarkup();
-        this.#clear();
-        this.#parentElement.insertAdjacentHTML("afterbegin", markup);
-        console.log(data);
+var _viewJs = require("./View.js");
+var _viewJsDefault = parcelHelpers.interopDefault(_viewJs);
+class RecipeView extends (0, _viewJsDefault.default) {
+    _parentElement = document.querySelector(".recipe");
+    _errorMessage = "No recipes found for your query. Please try again!";
+    _message = "";
+    /** Publisher Function :- Get a input from controller Js to handle the events*/ addHandlerRender(controlRecipe) {
+        let events = [
+            'hashchange',
+            'load'
+        ];
+        events.forEach((ev)=>window.addEventListener(ev, controlRecipe));
     }
-    #clear() {
-        this.#parentElement.innerHTML = "";
-    }
-    renderSpinner = function() {
-        const markup = `
-      <div class="spinner">
-        <svg>
-          <use href="${(0, _iconsSvgDefault.default)}#icon-loader"></use>
-        </svg>
-      </div> `;
-        this.#parentElement.innerHTML = "";
-        this.#parentElement.insertAdjacentHTML("afterbegin", markup);
-    };
-    #genrateMarkup() {
+    _genrateMarkup() {
         return `<figure class="recipe__fig">
           <img src="${this.data.imageurl}" alt="Tomato" class="recipe__img" />
           <h1 class="recipe__title">
@@ -2692,7 +2705,7 @@ class RecipeView {
           <h2 class="heading--2">Recipe ingredients</h2>
           
           <ul class="recipe__ingredient-list">
-          ${this.data.ingredients.map((ing)=>this.#genrateMarkupIngreident(ing)).join("")}
+          ${this.data.ingredients.map((ing)=>this._genrateMarkupIngreident(ing)).join("")}
          </ul>
         </div>
         <div class="recipe__directions">
@@ -2715,7 +2728,7 @@ class RecipeView {
         </div>
         `;
     }
-    #genrateMarkupIngreident(ing) {
+    _genrateMarkupIngreident(ing) {
         return `
       <li class="recipe__ingredient">
         <svg class="recipe__icon">
@@ -2732,7 +2745,7 @@ class RecipeView {
 }
 exports.default = new RecipeView();
 
-},{"url:../../img/icons.svg":"loVOp","fractional":"3SU56","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"3SU56":[function(require,module,exports,__globalThis) {
+},{"url:../../img/icons.svg":"loVOp","fractional":"3SU56","./View.js":"5cUXS","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"3SU56":[function(require,module,exports,__globalThis) {
 /*
 fraction.js
 A Javascript fraction library.
@@ -2985,6 +2998,114 @@ Fraction.primeFactors = function(n) {
 };
 module.exports.Fraction = Fraction;
 
-},{}]},["3xUkP","aenu9"], "aenu9", "parcelRequire94c2")
+},{}],"5cUXS":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _iconsSvg = require("url:../../img/icons.svg");
+var _iconsSvgDefault = parcelHelpers.interopDefault(_iconsSvg);
+class View {
+    render(data) {
+        if (!data || Array.isArray(data) && data.length === 0) return this.handlingError();
+        this.data = data;
+        const markup = this._genrateMarkup();
+        this._clear();
+        this._parentElement.insertAdjacentHTML("afterbegin", markup);
+        console.log(data);
+    }
+    _clear() {
+        this._parentElement.innerHTML = "";
+    }
+    renderSpinner = function() {
+        const markup = `
+          <div class="spinner">
+            <svg>
+              <use href="${(0, _iconsSvgDefault.default)}#icon-loader"></use>
+            </svg>
+          </div> `;
+        this._parentElement.innerHTML = "";
+        this._parentElement.insertAdjacentHTML("afterbegin", markup);
+    };
+    handlingError(message = this._errorMessage) {
+        const markup = `<div class="error">
+                <div>
+                  <svg>
+                    <use href="${(0, _iconsSvgDefault.default)}#icon-alert-triangle"></use>
+                  </svg>
+                </div>
+                <p>No recipes found for your query. Please try again!</p>
+                <p>${message}</p>
+              </div>`;
+        this._clear();
+        this._parentElement.insertAdjacentHTML("afterbegin", markup);
+    }
+    succsessMessage(sMessage) {
+        const markup = `
+        <div class="message">
+            <div>
+              <svg>
+                <use href="src/img/icons.svg#icon-smile"></use>
+              </svg>
+            </div>
+            <p>Start by searching for a recipe or an ingredient. Have fun!</p>
+          </div>
+        `;
+        this._clear();
+        this._parentElement.insertAdjacentHTML("afterbegin", markup);
+    }
+}
+exports.default = View;
+
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","url:../../img/icons.svg":"loVOp"}],"9OQAM":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+class SearchView {
+    _parentEl = document.querySelector('.search');
+    getQuery() {
+        let query = this._parentEl.querySelector('.search__field').value;
+        this._clearField();
+        return query;
+    }
+    _clearField() {
+        this._parentEl.querySelector('.search__field').value = '';
+    }
+    /** Publisher Function :- Get a input from controller Js to handle the events */ addHandlerSearch(controlRecipe) {
+        this._parentEl.addEventListener('submit', function(e) {
+            e.preventDefault();
+            controlRecipe();
+        });
+    }
+}
+exports.default = new SearchView();
+
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"f70O5":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _view = require("./View");
+var _viewDefault = parcelHelpers.interopDefault(_view);
+var _iconsSvg = require("url:../../img/icons.svg");
+var _iconsSvgDefault = parcelHelpers.interopDefault(_iconsSvg);
+class ResultView extends (0, _viewDefault.default) {
+    _parentElement = document.querySelector(".results");
+    _errorMessage = "No recipes found for your query. Please try again!";
+    _genrateMarkup() {
+        return this.data.map(this._genrateMarkupPreview).join('');
+    }
+    _genrateMarkupPreview(result) {
+        return `<li class="preview">
+      <a class="preview__link preview__link--active" href="#${result.id}">
+        <figure class="preview__fig">
+          <img src="${result.imageurl}" alt="Test" />
+        </figure>
+        <div class="preview__data">
+          <h4 class="preview__title">${result.title}</h4>
+          <p class="preview__publisher">${result.publisher}</p>
+        </div>
+      </a>
+    </li>`;
+    }
+}
+exports.default = new ResultView();
+
+},{"./View":"5cUXS","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","url:../../img/icons.svg":"loVOp"}]},["3xUkP","aenu9"], "aenu9", "parcelRequire94c2")
 
 //# sourceMappingURL=index.e37f48ea.js.map
