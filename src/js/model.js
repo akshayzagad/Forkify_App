@@ -8,7 +8,7 @@ export const state = {
 export const loadRecipe = async function (id){
     try {
         //Recipe Api
-        const responseData = await getJson(`${API_URL}/${id}`);
+        const responseData = await getJson(`${API_URL}${id}`);
        
         let { recipe } = responseData.data;
         state.recipe =
@@ -28,3 +28,11 @@ export const loadRecipe = async function (id){
         throw err;
     }       
 }
+
+export const searchReasult = async function (query) {
+    const responseData = await getJson(`${API_URL}?search=${query}`);
+    let { recipe } = responseData.data;
+    console.log(responseData);
+}
+
+console.log(searchReasult('pizza'));
