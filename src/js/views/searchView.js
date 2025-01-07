@@ -14,10 +14,10 @@ class SearchView {
     }
 
     /** Publisher Function :- Get a input from controller Js to handle the events */
-    addHandlerSearch(controlRecipe){
+    addHandlerSearch(ControlSearchResults){
         this._parentEl.addEventListener('submit',function(e){
        e.preventDefault();
-       controlRecipe();
+       ControlSearchResults();
         })
       }
     

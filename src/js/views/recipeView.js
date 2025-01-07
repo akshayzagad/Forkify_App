@@ -15,62 +15,16 @@ class RecipeView extends View {
     events.forEach(ev => window.addEventListener(ev, controlRecipe));
   }
 
-<<<<<<< HEAD
-  #clear() {
-    this.#parentElement.innerHTML = "";
-  }
-
-  handlingError(message){
-    const markup = `<div class="error">
-            <div>
-              <svg>
-                <use href="${icons}#icon-alert-triangle"></use>
-              </svg>
-            </div>
-            <p>No recipes found for your query. Please try again!</p>
-            <p>${message}</p>
-          </div>`;
-    this.#clear();
-    this.#parentElement.insertAdjacentHTML("afterbegin", markup);
-  }
-
-  succsessMessage(sMessage){
-    const markup = `
-    <div class="message">
-        <div>
-          <svg>
-            <use href="src/img/icons.svg#icon-smile"></use>
-          </svg>
-        </div>
-        <p>Start by searching for a recipe or an ingredient. Have fun!</p>
-      </div>
-    `
-    this.#clear();
-    this.#parentElement.insertAdjacentHTML("afterbegin", markup);
-  }
-
-  /** Publisher Function :- Get a input from controller Js to handle the events*/
-
-  addHandlerRender(controlRecipe){
-    let events = ['hashchange', 'load']
-    events.forEach(ev => window.addEventListener(ev, controlRecipe));
-  }
-
-  renderSpinner = function () {
-    const markup = `
-      <div class="spinner">
-        <svg>
-          <use href="${icons}#icon-loader"></use>
-        </svg>
-      </div> `;
-    this.#parentElement.innerHTML = "";
-    this.#parentElement.insertAdjacentHTML("afterbegin", markup);
-  };
-
-  #genrateMarkup() {
-=======
+  /**
+   * Generates the HTML markup for the recipe view.
+   * 
+   * This method constructs the HTML structure for displaying a recipe, including
+   * the recipe image, title, cooking time, servings, ingredients, and directions.
+   * It uses the data stored in the `this.data` object to populate the content.
+   * 
+   * @returns {string} The HTML markup for the recipe view.
+   */
   _genrateMarkup() {
->>>>>>> 4ccc08ede114fb149c212f8b41ed04573459d994
     return `<figure class="recipe__fig">
           <img src="${this.data.imageurl}" alt="Tomato" class="recipe__img" />
           <h1 class="recipe__title">
@@ -151,6 +105,15 @@ class RecipeView extends View {
         </div>
         `;
   }
+  /**
+   * Generates markup for a single ingredient.
+   * 
+   * @param {Object} ing - The ingredient object.
+   * @param {number} [ing.quantity] - The quantity of the ingredient.
+   * @param {string} ing.unit - The unit of the ingredient.
+   * @param {string} ing.description - The description of the ingredient.
+   * @returns {string} The HTML markup for the ingredient.
+   */
   _genrateMarkupIngreident(ing) {
     return `
       <li class="recipe__ingredient">
@@ -167,5 +130,6 @@ class RecipeView extends View {
       `;
   }
 }
+
 
 export default new RecipeView();
