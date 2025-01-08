@@ -1,10 +1,11 @@
-import icons from "url:../img/icons.svg";
+
 import "core-js/stable";
 import "regenerator-runtime/runtime";
 import * as model from "./model.js";
 import recipeView from "./views/recipeView.js";
 import searchView from "./views/searchView.js";
 import resultView from "./views/resultView.js";
+import paginationView from "./views/paginationView.js";
 
 const recipeContainer = document.querySelector(".recipe");
 
@@ -42,23 +43,37 @@ const ControlSearchResults = async function () {
 
     /* Get search query from search view and Store it */
     let query = searchView.getQuery();
+    console.log(query);
+    
     if (!query) return;
 
     /* store query pass in Api and get data  */
     await model.loadSearchResult(query);
 
      /* Render Preview passing data into Parent class View which come from above api*/
-    resultView.render(model.state.searchs.results);
+    // resultView.render(model.state.searchs.results);
+    resultView.render(model.getSearchResultPage());
+
+    /**Render Pagination view */
+    paginationView.render(model.state.searchs);
 
   } catch (error) {
     console.error(error);
   }
 };
 
+const ControlPagination = function (gotoPage) {
+  // Render new results
+  resultView.render(model.getSearchResultsPage(gotoPage));
+  paginationView.render(model.state.searchs);
+};
+
+
 function init() {
   /** Subskriber Function :- calling addHandlerRender function in recipeView*/
   recipeView.addHandlerRender(controlRecipe);
   searchView.addHandlerSearch(ControlSearchResults);
+  paginationView.addHandlerClick(ControlPagination);
 }
 
 init();
