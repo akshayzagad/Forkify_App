@@ -52,7 +52,7 @@ const ControlSearchResults = async function () {
 
      /* Render Preview passing data into Parent class View which come from above api*/
     // resultView.render(model.state.searchs.results);
-    resultView.render(model.getSearchResultPage());
+    resultView.render(model.getSearchResultPage(2));
 
     /**Render Pagination view */
     paginationView.render(model.state.searchs);
@@ -64,7 +64,7 @@ const ControlSearchResults = async function () {
 
 const ControlPagination = function (gotoPage) {
   // Render new results
-  resultView.render(model.getSearchResultsPage(gotoPage));
+  resultView.render(model.getSearchResultPage(gotoPage));
   paginationView.render(model.state.searchs);
 };
 

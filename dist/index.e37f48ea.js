@@ -631,7 +631,7 @@ const ControlSearchResults = async function() {
         if (!query) return;
         /* store query pass in Api and get data  */ await _modelJs.loadSearchResult(query);
         /* Render Preview passing data into Parent class View which come from above api*/ // resultView.render(model.state.searchs.results);
-        (0, _resultViewJsDefault.default).render(_modelJs.getSearchResultPage());
+        (0, _resultViewJsDefault.default).render(_modelJs.getSearchResultPage(2));
         /**Render Pagination view */ (0, _paginationViewJsDefault.default).render(_modelJs.state.searchs);
     } catch (error) {
         console.error(error);
@@ -639,7 +639,7 @@ const ControlSearchResults = async function() {
 };
 const ControlPagination = function(gotoPage) {
     // Render new results
-    (0, _resultViewJsDefault.default).render(_modelJs.getSearchResultsPage(gotoPage));
+    (0, _resultViewJsDefault.default).render(_modelJs.getSearchResultPage(gotoPage));
     (0, _paginationViewJsDefault.default).render(_modelJs.state.searchs);
 };
 function init() {
